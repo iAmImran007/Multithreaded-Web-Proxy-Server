@@ -24,7 +24,6 @@ Built with C, POSIX threads, semaphores, and socket programming, this proxy serv
 - 🎯 **Dynamic Port Binding** - Automatically assigns available system ports
 - 📝 **Comprehensive Error Handling** - Proper HTTP status codes (400, 403, 404, 500, 501, 505)
 - 🔧 **Memory Management** - Efficient allocation and deallocation of resources
-- 📡 **Socket Programming** - Raw socket implementation for network communication
 
 ## 🏗️ Architecture Overview
 
