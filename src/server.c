@@ -5,7 +5,9 @@
 #define MAX_CLIENTS 50
 #define MAX_BUFFER_BYTES 4096 
 
-int portNo = 8080; //to-do: by default make the server assign a random port no. available on system
+//int portNo = 8080; //to-do: by default make the server assign a random port no. available on system
+int portNo = 0;
+
 int proxySocketId;
 pthread_t threadID[MAX_CLIENTS];
 sem_t countingSemaphore;
@@ -296,9 +298,9 @@ int main(int argc, char* argv[]){
         exit(1);
     }
 
-    if(argc == 2){
-        portNo = atoi(argv[1]);
-    }
+    // if(argc == 2){
+    //     portNo = atoi(argv[1]);
+    // }
     // else{
     //     printf("port no. not provided\n"); //todo: change pritf to something else remated to error handling
     //     exit(1);
@@ -321,7 +323,7 @@ int main(int argc, char* argv[]){
 
     memset(&serverAddress, 0, sizeof(serverAddress));
     serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(portNo);
+    serverAddress.sin_port = htons(0);
     serverAddress.sin_addr.s_addr = INADDR_ANY;
 
     if( bind(proxySocketId, (const struct sockaddr*)&serverAddress, (socklen_t)sizeof(serverAddress)) == -1 ){
@@ -329,7 +331,11 @@ int main(int argc, char* argv[]){
         exit(1);
     }
 
-    printf("Binding on port: %d\n",portNo);
+    socklen_t len = sizeof(serverAddress);
+    getsockname(proxySocketId, (struct sockaddr*)&serverAddress, &len);
+    portNo = ntohs(serverAddress.sin_port);
+    printf("Proxy bound to random port: %d\n", portNo);
+
 
     if( listen(proxySocketId, MAX_CLIENTS) == -1){
         printf("listen failed\n"); //todo: change pritf to something else remated to error handling
@@ -356,7 +362,8 @@ int main(int argc, char* argv[]){
         char IPstr[INET_ADDRSTRLEN];
         inet_ntop(AF_INET, &ipAddress, IPstr, INET_ADDRSTRLEN);
         
-        printf("\nClient connected with Port Number: %d & IP Address: %s\n",ntohs(portNo), IPstr);
+        printf("\nClient connected with Proxy Port: %d & IP Address: %s\n", portNo, IPstr);
+
 
         pthread_create( &threadID[clientNumber], NULL, threadFunction, (void*)&connectedSocketIDs[clientNumber] );    
         clientNumber++;

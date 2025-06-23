@@ -29,5 +29,8 @@ clean:
 
 .PHONY: run
 run: $(TARGET)
-	./$(TARGET) $(PORT)
+	./$(TARGET) 
+
+
+# $(PORT)
 
